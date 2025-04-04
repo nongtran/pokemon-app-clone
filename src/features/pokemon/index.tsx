@@ -3,7 +3,7 @@
 import { fetchTypes } from "@/apis/pokemonApi";
 import { fetchPokemonData } from "@/features/common/utils/fetchPokemonData";
 import { PokemonDetail, PokemonResponse, PokemonType } from "@/types/pokemon";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import PokemonList from "./components/PokemonList";
 import TypeFilter from "./components/TypeFilter";
@@ -16,8 +16,18 @@ export default function Pokemon() {
     null
   );
   const [types, setTypes] = useState<PokemonType[] | null>(null);
-  const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
-  const [currentPage, setCurrentPage] = useState<number>(1);
+
+  const searchParams = useSearchParams();
+
+  const [selectedTypes, setSelectedTypes] = useState<string[]>(() => {
+    const types = searchParams.get("type");
+    return types ? types.split(",") : [];
+  });
+
+  const [currentPage, setCurrentPage] = useState<number>(() => {
+    const page = searchParams.get("page");
+    return page ? parseInt(page, 10) : 1;
+  });
 
   const router = useRouter();
 
